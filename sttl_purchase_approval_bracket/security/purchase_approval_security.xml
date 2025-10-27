@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Record Rules for Purchase Approval Brackets -->
+
+    <!-- Purchase users can read all brackets in their company -->
+    <record id="purchase_approval_bracket_rule_user" model="ir.rule">
+        <field name="name">Purchase Approval Bracket: User Access</field>
+        <field name="model_id" ref="model_purchase_approval_bracket"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('purchase.group_purchase_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Purchase managers have full access to brackets -->
+    <record id="purchase_approval_bracket_rule_manager" model="ir.rule">
+        <field name="name">Purchase Approval Bracket: Manager Full Access</field>
+        <field name="model_id" ref="model_purchase_approval_bracket"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('purchase.group_purchase_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+</odoo>

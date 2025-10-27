@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Tree View for Purchase Approval Brackets -->
+    <record id="view_purchase_approval_bracket_tree" model="ir.ui.view">
+        <field name="name">purchase.approval.bracket.tree</field>
+        <field name="model">purchase.approval.bracket</field>
+        <field name="arch" type="xml">
+            <tree string="Purchase Approval Brackets">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="min_amount" widget="monetary"/>
+                <field name="max_amount" widget="monetary"/>
+                <field name="location_id" optional="show"/>
+                <field name="approver_names"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for Purchase Approval Brackets -->
+    <record id="view_purchase_approval_bracket_form" model="ir.ui.view">
+        <field name="name">purchase.approval.bracket.form</field>
+        <field name="model">purchase.approval.bracket</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Approval Bracket">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                attrs="{'invisible': [('active', '=', True)]}"/>
+                    </div>
+
+                    <group>
+                        <group name="main_info">
+                            <field name="name" placeholder="e.g., Pharmacy - Manager Approval"/>
+                            <field name="sequence"/>
+                            <field name="active" invisible="1"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group name="amounts">
+                            <field name="min_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="max_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <div colspan="2" class="alert alert-info" role="alert">
+                                <i class="fa fa-info-circle"/>
+                                Set Maximum Amount to 0 for unlimited (no upper limit).
+                            </div>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group name="location">
+                            <field name="location_id"
+                                   placeholder="Leave empty for all locations"
+                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                            <div colspan="2" class="alert alert-info" role="alert">
+                                <i class="fa fa-info-circle"/>
+                                Optional: Specify a destination location to apply this bracket only to purchases for that location.
+                                Leave empty to apply to all purchases.
+                            </div>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Approvers" name="approvers">
+                            <field name="approver_ids" widget="many2many_avatar_user"/>
+                            <div class="alert alert-warning" role="alert" attrs="{'invisible': [('approver_ids', '!=', [])]}">
+                                <i class="fa fa-warning"/>
+                                <strong>Warning:</strong> At least one approver must be assigned to this bracket.
+                            </div>
+                        </page>
+
+                        <page string="Help" name="help">
+                            <div class="alert alert-info" role="alert">
+                                <h4><i class="fa fa-question-circle"/> How Approval Brackets Work</h4>
+                                <ul>
+                                    <li><b>Sequence/Priority:</b> Lower sequence number = higher priority when multiple brackets match.</li>
+                                    <li><b>Amount Range:</b> The bracket applies when purchase order total is between min and max amounts.</li>
+                                    <li><b>Location Filter:</b> Each bracket must be assigned to a specific location (Magasin, Pharmacy, Maintenance, Cuisine).</li>
+                                    <li><b>Multiple Approvers:</b> Any of the assigned approvers can approve the purchase order.</li>
+                                    <li><b>Workflow:</b> When a user confirms a PO that matches a bracket:
+                                        <ol>
+                                            <li>PO goes to "Pending Approval" state</li>
+                                            <li>Notifications sent to all approvers</li>
+                                            <li>Approver clicks "Confirm Order" to approve</li>
+                                            <li>Original user receives notification of approval</li>
+                                        </ol>
+                                    </li>
+                                </ul>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View for Purchase Approval Brackets -->
+    <record id="view_purchase_approval_bracket_search" model="ir.ui.view">
+        <field name="name">purchase.approval.bracket.search</field>
+        <field name="model">purchase.approval.bracket</field>
+        <field name="arch" type="xml">
+            <search string="Search Approval Brackets">
+                <field name="name"/>
+                <field name="location_id"/>
+                <field name="approver_ids"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Global (No Location)" name="global" domain="[('location_id', '=', False)]"/>
+                <filter string="Location Specific" name="location_specific" domain="[('location_id', '!=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Location" name="group_location" context="{'group_by': 'location_id'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Purchase Approval Brackets -->
+    <record id="action_purchase_approval_bracket" model="ir.actions.act_window">
+        <field name="name">Approval Brackets</field>
+        <field name="res_model">purchase.approval.bracket</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first purchase approval bracket
+            </p>
+            <p>
+                Define amount thresholds that trigger approval workflows for purchase orders.
+                You can set different approval levels based on purchase amounts and destination locations.
+            </p>
+        </field>
+    </record>
+
+</odoo>

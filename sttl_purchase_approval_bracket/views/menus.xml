@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Menu: Purchase > Configuration > Approval Brackets -->
+    <menuitem id="menu_purchase_approval_bracket"
+              name="Approval Brackets"
+              parent="purchase.menu_purchase_config"
+              action="action_purchase_approval_bracket"
+              sequence="50"
+              groups="purchase.group_purchase_manager"/>
+
+</odoo>
