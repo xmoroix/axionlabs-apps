@@ -30,7 +30,7 @@
     'auto_install': False,
     
     # Marketplace-specific fields
-    'price': 69.00,
+    'price': 49.00,
     'currency': 'EUR',
     'support_url': 'https://adoctor.org/support',
     'images': [
